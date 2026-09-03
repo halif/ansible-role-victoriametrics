@@ -1,0 +1,9 @@
+---
+- name: Include service user setup
+  ansible.builtin.include_tasks: user.yml
+
+- name: Include VictoriaMetrics installation
+  ansible.builtin.include_tasks: install.yml
+
+- name: Include VictoriaMetrics configuration
+  ansible.builtin.include_tasks: configure.yml
