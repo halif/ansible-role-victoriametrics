@@ -1,0 +1,22 @@
+---
+# Оригинальная роль скачивала и распаковывала архив напрямую из URL
+# через unarchive (remote_src: true с src=URL) — рабочий, но не самый
+# идемпотентный путь: скачивание происходит заново при каждом
+# прогоне, даже если версия не менялась. Разделяем на два шага:
+# get_url (умеет не перекачивать неизменившийся файл) и unarchive уже
+# из локального файла.
+- name: Download VictoriaMetrics archive
+  ansible.builtin.get_url:
+    url: "{{ victoriametrics_url }}"
+    dest: "/tmp/victoria-metrics-v{{ victoriametrics_version }}.tar.gz"
+    mode: '0644'
+  register: _victoriametrics_download
+
+- name: Extract VictoriaMetrics archive
+  ansible.builtin.unarchive:
+    src: "/tmp/victoria-metrics-v{{ victoriametrics_version }}.tar.gz"
+    dest: "{{ victoriametrics_install_dir }}"
+    remote_src: true
+    owner: "{{ victoriametrics_system_username }}"
+    group: "{{ victoriametrics_system_groupname }}"
+  notify: Restart victoriametrics

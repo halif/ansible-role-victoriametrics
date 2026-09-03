@@ -1,0 +1,36 @@
+---
+- name: Configure VictoriaMetrics environment file
+  ansible.builtin.template:
+    src: etc/default/victoriametrics.j2
+    dest: /etc/default/victoriametrics
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart victoriametrics
+
+# ВАЖНО: в оригинальной роли этот таск не имел notify — смена самого
+# systemd-юнита (например, WorkingDirectory или User) не приводила к
+# перезапуску сервиса, и правки молча не применялись бы до ручного
+# рестарта или перезагрузки. force: true из оригинала убран — это
+# поведение template-модуля уже по умолчанию.
+- name: Configure VictoriaMetrics systemd unit
+  ansible.builtin.template:
+    src: etc/systemd/system/victoriametrics.service.j2
+    dest: /etc/systemd/system/victoriametrics.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart victoriametrics
+
+- name: Ensure VictoriaMetrics service is started and enabled
+  ansible.builtin.systemd:
+    name: victoriametrics
+    daemon_reload: true
+    enabled: true
+    state: started
+
+- name: Wait for VictoriaMetrics to accept connections on port {{ victoriametrics_http_port }}
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: "{{ victoriametrics_http_port }}"
+    timeout: 30
