@@ -1,0 +1,28 @@
+---
+# VictoriaMetrics выпускает релизы очень часто (примерно раз в неделю).
+# Версия ниже была актуальной на момент написания роли — периодически
+# сверяйте с https://github.com/VictoriaMetrics/VictoriaMetrics/releases
+victoriametrics_version: "1.151.0"
+
+# Формат имени файла в релизах менялся (см. CHANGELOG проекта, "Update
+# note 5") — текущая схема: victoria-metrics-linux-amd64-vX.Y.Z.tar.gz
+victoriametrics_url: "https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v{{ victoriametrics_version }}/victoria-metrics-linux-amd64-v{{ victoriametrics_version }}.tar.gz"
+
+victoriametrics_storage_dir: "/var/lib/victoriametrics"
+victoriametrics_install_dir: "/opt/victoriametrics"
+
+victoriametrics_system_username: "victoriametrics"
+victoriametrics_system_groupname: "victoriametrics"
+
+# Пусто = слушать на всех интерфейсах (штатное поведение самого
+# VictoriaMetrics, см. документацию по -httpListenAddr). Задайте
+# конкретный IP, если нужно ограничить прослушивание одним интерфейсом.
+victoriametrics_http_address: ""
+victoriametrics_http_port: "8428"
+
+# Время хранения метрик в месяцах (штатный формат -retentionPeriod:
+# число без суффикса — это месяцы, см. документацию проекта).
+victoriametrics_retention_period: 12
+victoriametrics_selfscrape_interval: "10s"
+
+victoriametrics_memory_allowed_percent: 5
