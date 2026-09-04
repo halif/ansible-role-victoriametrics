@@ -1,0 +1,27 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: Check that the victoriametrics service is active
+      ansible.builtin.systemd:
+        name: victoriametrics
+      register: _victoriametrics_service
+      until: _victoriametrics_service.status.ActiveState == 'active'
+      retries: 12
+      delay: 5
+
+    - name: Verify VictoriaMetrics is listening on port 8428
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: 8428
+        timeout: 30
+
+    - name: Verify VictoriaMetrics health endpoint responds
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:8428/health"
+        status_code: 200
+      register: _victoriametrics_health
+      retries: 6
+      delay: 5
+      until: _victoriametrics_health.status == 200
