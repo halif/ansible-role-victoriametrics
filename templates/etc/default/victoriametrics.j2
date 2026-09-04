@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+# Set the command-line arguments to pass to the server.
+ARGS="-httpListenAddr={{ victoriametrics_http_address }}:{{ victoriametrics_http_port }} \
+      -retentionPeriod={{ victoriametrics_retention_period }} \
+      -storageDataPath={{ victoriametrics_storage_dir }} \
+      -selfScrapeInterval={{ victoriametrics_selfscrape_interval }} \
+      -memory.allowedPercent={{ victoriametrics_memory_allowed_percent }}"

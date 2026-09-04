@@ -1,0 +1,18 @@
+[Unit]
+Description=VictoriaMetrics time series database
+Requires=network.target
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory={{ victoriametrics_install_dir }}
+User={{ victoriametrics_system_username }}
+Group={{ victoriametrics_system_groupname }}
+EnvironmentFile=/etc/default/victoriametrics
+ExecStart={{ victoriametrics_install_dir }}/victoria-metrics-prod $ARGS
+RestartSec=10
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
